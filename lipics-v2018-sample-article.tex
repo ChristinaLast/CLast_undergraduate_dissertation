@@ -1,0 +1,361 @@
+\documentclass[a4paper,UKenglish]{lipics-v2018}
+%This is a template for producing LIPIcs articles. 
+%See lipics-manual.pdf for further information.
+%for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
+%for british hyphenation rules use option "UKenglish", for american hyphenation rules use option "USenglish"
+% for section-numbered lemmas etc., use "numberwithinsect"
+
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+
+%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+
+\bibliographystyle{plainurl}% the recommnded bibstyle
+
+\title{Enabling the Discovery of Thematically Related Research Objects with Systematic Spatializations}
+
+\titlerunning{Enabling Discovery of Thematically Related Research Objects}%optional, please use if title is longer than one line
+
+\author{Authors anonymous}{Affiliations anonymous}{}{}{}
+
+% \author{Sara Lafia}{Department of Geography, University of California, Santa Barbara, USA}{slafia@ucsb.edu}{https://orcid.org/0000-0002-5896-7295}{}%mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty.
+
+% \author{Christina Last}{School of Geographical Sciences, University of Bristol, UK}{cl15540@bristol.ac.uk}{}{}
+
+% \author{Werner Kuhn}{Department of Geography, University of California, Santa Barbara, USA}{werner@ucsb.edu}{https://orcid.org/0000-0002-4491-0132}{}
+
+\authorrunning{Anonymous}%mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+
+% \authorrunning{S.\, Lafia et. al.}%mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+
+\Copyright{Anonymous}%mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+% \Copyright{Sara Lafia, Christina Last, and Werner Kuhn}%mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+\subjclass{\ccsdesc[300]{Information systems~Question answering}}% mandatory: Please choose ACM 2012 classifications from https://www.acm.org/publications/class-2012 or https://dl.acm.org/ccs/ccs_flat.cfm . E.g., cite as "General and reference $\rightarrow$ General literature" or \ccsdesc[100]{General and reference~General literature}. 
+
+\keywords{spatialization, core concepts of spatial information, information discovery}%mandatory
+
+\category{}%optional, e.g. invited paper
+
+\relatedversion{}%optional, e.g. full version hosted on arXiv, HAL, or other respository/website
+
+% \supplement{\url{https://github.com/saralafia/adrl}}%optional, e.g. related research data, source code, ... hosted on a repository like zenodo, figshare, GitHub, ...
+
+\funding{}%optional, to capture a funding statement, which applies to all authors. Please enter author specific funding statements as fifth argument of the \author macro.
+
+% \acknowledgements{We gratefully acknowledge the contributions that André Bruggmann (PhD) and Dr. Sara Fabrikant of University of Zurich's Geographic Information Visualization and Analysis Unit made to the implementation of this research during André’s time as a Visiting Scholar at UCSB’s Center for Spatial Studies.}%optional
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\EventEditors{John Q. Open and Joan R. Access and so and on and so forth}
+\EventNoEds{5}
+\EventLongTitle{14th Conference on Spatial Information Theory}
+\EventShortTitle{COSIT 2019}
+\EventAcronym{COSIT}
+\EventYear{2019}
+\EventDate{September 9--213, 2019}
+\EventLocation{Regensburg, Germany}
+\EventLogo{}
+\SeriesVolume{42}
+\ArticleNo{23}
+%\nolinenumbers %uncomment to disable line numbering
+%\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+It is challenging for scholars to discover thematically related research in a multidisciplinary setting, such as that of a university library. In this work, we propose to use spatialization techniques to convey the relatedness of research themes without requiring scholars to have specific knowledge of disciplinary search terminology. We approach this task conceptually by revisiting existing spatialization techniques and reframing them in terms of core concepts of spatial information, highlighting their different capacities. To evaluate our designs, we spatialize masters and doctoral theses (two kinds of research objects available through a university library repository) using topic modeling to assign a relatively small number of research topics to the objects. We discuss and implement two distinct spaces for exploration: a field view of research \textit{topics} and a network view of research \textit{objects}. We find that each space enables distinct visual perceptions and questions about the relatedness of research themes. A field view enables questions about the distribution of research objects in the topic space, while a network view enables questions about connections between research objects or about centrality. Our work contributes to spatialization theory a systematic choice of spaces informed by core concepts of spatial information. Its application to the design of library discovery tools offers two distinct ways of intuitively gaining insights into the thematic relatedness of research objects, regardless of their disciplinary affiliations. 
+ \end{abstract}
+
+\section{Introduction}
+In recent decades, the curation of scholarship and its access mechanisms have shifted from physical to virtual spaces. In the 1990s, physical card catalogs were migrated to online databases, trading collocation for scalability \cite{baker_1994}. Similarly, library shelves with thematically collocated material are today largely accessed through virtual spaces, such as digital repositories with faceted categories \cite{Hearst2011b}. This shift has increased the potential for exchange of scholarly information on the Web through semantically rich “research objects” \cite{Bechhofer2010d}. While online library services may provide scholars with access to millions of research objects, they do not necessarily improve the ability of scholars to serendipitously discover \textit{related} objects. Such a capacity was naturally built into the physical spaces of book shelves, albeit in a limited
+%single and limited one-dimensional 
+%sl: I would say that bookshelves are not 1-dimensional, but that lists of results for example are
+form. 
+Spatialization can recreate specially designed two-dimensional thematic spaces, such as neighborhoods and networks of themes. These spaces support exploration, browsing, and navigating and can be exploited in future search and discovery services, complementing standard known-item searches \cite{Fabrikant2000b}. 
+
+Exploratory search is already supported by library services, like Geoblacklight\footnote{\url{https://geoblacklight.org/}} and DASH\footnote{\url{https://dash.ucsb.edu/search}}, which index research objects through \textit{geographic space} and enable  discovery and access through map interfaces. Such services curate and expose research objects based on their geographic footprints, derived from the places that they are about (if any). They enable the integration of research perspectives by geographic locations, revealing spatial patterns, such as clusters or gaps \cite{MacEachren2004c}. They are especially useful in a university setting where research objects from different disciplines may refer to the same places \cite{Lafia2016h}. However, geographic space only captures geographic location and relatedness. As observations have the dimensions of “theme, location, and time” \cite{Sinton1977}, each of these dimensions can be used to organize research objects. Since the temporal organization of collections is comparatively straightforward (e.g. indexing research objects by their date of publication or the period they are about and displaying them using a time slider), we take on the bigger challenge of representing the relatedness of research themes. 
+
+We deal with this challenge by literally mapping it to the solution for geographic location. In other words, we ask how exploratory search for research objects can be improved by maps of thematic spaces in which related research themes are placed closer together. Conceptually and technically, we adapt our previous work to expose research objects by their geographic footprints \cite{Lafia2016h} to discovery in (potentially multiple), specially designed two-dimensional thematic spaces, which we implement using spatialization techniques. Spatializations exploit people’s familiarity with spaces in everyday life to produce intuitive visual information spaces that convey similarity through distance \cite{Kuhn1996}. Various types of spatializations, including point maps \cite{Montello2003d}, network maps \cite{Fabrikant2004a}, and regions \cite{Fabrikant2006a} have been proposed and empirically evaluated, demonstrating that people correctly interpret nearby items in abstract space as similar.
+
+Yet, spatialization remains underexploited, particularly in libraries, which have to deal with vast and context-dependent thematic search spaces. We see this as an opportunity to experiment with spatialization in a multidisciplinary university library repository of research objects. What further distinguishes our approach is that the spatial views we develop are designed based on core concepts of spatial information\footnote{\url{https://www.researchgate.net/project/Core-Concepts-of-Spatial-Information}}; in this theory, a base concept (location), four content concepts (field, object, network, event), and a growing set of quality concepts (granularity, accuracy, provenance) capture what spatial information is about, “at a level above data models, but independent of particular application domains” \cite{Kuhn2012e}. We use these concepts to design two kinds of spatializations: topic fields and networks of research objects. A field of research topics reveals their  distribution, while a network of research objects reveals their connectivity and centrality. We implement these two spatial views by selecting the spatialization techniques of a self-organizing map \cite{Kohonen1995a} and of a planar network. To obtain the necessary visual interfaces to these abstract spaces, we extend the capabilities of the same web GIS platform (ArcGIS Online) that we previously used to display and discover research objects geographically. We show how the spaces that we design are configurable and enable intuitive exploration and discovery of related research objects across disciplines. 
+
+The remainder of the paper is organized as follows. In Section 2, we illustrate the challenge of discovering related research with a motivating scenario. Section 3 explains our conceptual approach to systematize the design of search spaces through the core concepts of spatial information. In Section 4, we implement spatializations of research objects from a university repository of masters and doctoral theses. In Section 5, we evaluate the spatializations, demonstrating the types of questions that they enable with examples from the scenario. Finally, in Section 6, we envision discovery in spatializations informed by other core concepts of spatial information.
+
+\section{Enabling Research Discovery Across Disciplines}
+\label{sec:motivation}
+Discovering thematically related research in a multidisciplinary setting is both important and challenging. This is a consequence of the siloing of scientific perspectives on the world into different disciplines and the heterogeneous terminologies used in them \cite{Soergel1999a}. Specifically, scholars may find it challenging to identify collaborators and methods outside of their discipline. This is problematic, given that scientific studies and applications of geographic information are increasingly transdisciplinary \cite{Kuhn2012e}; they may, for example, combine knowledge from sociology and psychology, or borrow methods from computer science and engineering.
+
+As a motivating scenario, consider the published theses of two geographers: “Representations of an Urban Neighborhood: Residents' Cognitive Boundaries of Koreatown, Los Angeles” \cite{Bae2018}; and “A Temporal Approach to Defining Place Types based on User-Contributed Geosocial Content” \cite{mckenzie2015temporal}. How could these geographers have gone about finding collaborators studying related topics or using related methods? Even for trained interdisciplinary researchers, disciplinary terminologies make it hard to discover related research, resulting in missed sources, insights, and opportunities for collaboration. How can researchers be made aware of thematically related research without needing to know its disciplinary terms?  
+
+A common approach to reduce mismatches in keyword-based search is to use ontologies to expand the set of search terms \cite{Baeza-Yates2011b}. However, this approach loses the more intuitive similarity relations in the construction of terminological hierarchies \cite{Gardenfors2000f}, whose relations (e.g. broader, narrower) may not always be meaningful to the user. Thus, we propose to complement the terminological approach with an innovative spatial approach affording similarity judgments on research themes. Just as designs for successful everyday spaces, like neighborhoods and street networks, follow spatial patterns \cite{Alexander1977a} and support important cognitive strategies, so can the designs for visual spaces that enable serendipitous discovery. These spatial patterns and strategies are well-understood in the geographic case (consider navigation or perspective-taking) and spatialization carries them over to abstract thematic spaces. The organizational affordances of space, well-known from geographic as well as desktop spaces, can be built into artificial spaces, creating useful and intuitive spatial structures for research themes.
+
+\section{Conceptual Approach: Making the Choices of Spaces Systematic}
+The core concepts of spatial information \cite{Kuhn2012e} offer a systematic approach to defining spaces by providing a typology of geographic (and other) spaces to guide the organization and interpretation of spatially referenced data. Thus, spatialization can be recast as a choice of a core concept of spatial information used as a lens through which to view some data (i.e. that of research objects). The core concepts provide a choice of lenses that enable distinct views on spatialized relationships, such as similarity. To go beyond purely cartographic design \cite{MacEachren2004c} and make our choices of spaces more systematic, we base our spatializations on those two core concepts that have a solid mathematical formalization: \textit{fields}, formalized by continuous functions from location to theme, and \textit{networks}, formalized by graph theory.
+
+\subsection{Choices of Spaces and their Entailments}
+We first review previous work to create  \textit{field} and \textit{network} spatializations, highlighting their underlying spatial theories and evolving our approach. Our thesis is that, if treated systematically and formally, there are 
+%sl: four? do you mean the content concepts? (object, network, field, and event)? but our premise is that object and event do not have the same level of formalization
+four distinct choices of spatial concepts, each of them carrying perceptual and inferential powers that enable specific types of questions and insights. \newline
+
+\noindent \textbf{Landscapes and Fields:} We begin with an example from Wise's \cite{Wise1999a} pioneering intelligence work, where viewers of a spatialized display of news documents intuitively perceived similarity relationships among them based on their proximity in the display. Documents were treated as objects, with \textit{k--means} and \textit{complete linkage hierarchical clustering} used to project documents to a two-dimensional plane. This resulted in a spatialization, where every position (and in particular the position of every news document) was surrounded by a neighborhood of topics. A surface was then fit over the display, representing a terrain that revealed peaks based on the frequency of terms in the corpus.
+%wk: of terms or of the topic at each position?
+%sl: current formulation is correct: "term layers" were created by summing the vector lengths (if there are five documents that mention a term, the vector is 5 units "high")
+
+While this introduced the metaphor of a landscape or terrain to information visualization, it conflated the field of topic vectors with one of topic frequencies, essentially performing a local map algebra operation. This analysis suggests that it is possible to separate the two field views (topic neighborhoods and topic frequencies) and add an object view (documents), where each affords different types of reasoning (on similarity, frequency, and clustering). Later, we show this idea for the case of research objects. While we will be leaving out frequencies (as they are not supported by adequate amounts of data), we further develop the object view into a network view that shows specific connections between documents.
+% sl: brief snippet explaining what about this does not make it a field representation; why and how is our work different? also reduce the description and focus on why landscapes are lacking
+%wk: yes, this is the challenge here, and we have not yet succeeded entirely
+
+Another example of an information landscape is Fabrikant's \cite{Fabrikant2000b} spatialization of a digital library's holdings. Like Wise’s approach, multidimensional scaling is used as a projection method to create a surface of keywords. However, Fabrikant's work extends the landscape metaphor by explicitly referencing three spatial concepts: 1) distance (similarity), 2) scale (level of detail), and 3) arrangement (dispersion and concentration), based on Golledge's primitives of spatial knowledge \cite{Golledge1995a}. These concepts are used in an attempt to systematically inform what users can do in the landscape: looking (overview), navigating (to discover items of interest), changing level of detail, selecting individual documents, and discovering relationships between documents (detail on demand). While this example moves toward conceptual formalization, it does not yet support multiple views based on different spatial concepts; it also does not make explicit and distinguish the two conflated field representations (of topics and frequencies). \newline
+
+\noindent \textbf{Networks and Graphs:} “Maps of science”  visualize research networks, ranging from co-citation networks to expertise profiles \cite{Borner2012b}. Börner et al. visualize a network of millions of university research articles embedded in an abstract spherical %geographic 
+space. 
+%wk, not a question that benefits from spatialization: This enables questions such as, “How many papers were published by an organization or individual in the last year?” 
+The network is embedded and rendered in a pseudo-Mercator projection, based on the idea that a Riemannian perspective, which uses a sphere as the layout surface, offers continuous linkages. However, it is unclear what additional costs or benefits this choice imparts, as it appears to push related nodes farther apart, which may make some network properties (such as centrality) harder for viewers to ascertain.
+%wk: I have not looked at Boerner's work in detail, but your description sounded quite negative. I have attempted to neutralize it a bit. Is it still correct?). 
+
+%sl: yes, except for the "geographic space", it's an abstract spherical space; I was worried it was harsh too
+
+A more systematic approach to visualize digital text archives extracts spatial and temporal information to produce spatializations \cite{Bruggmann2016b}. One of Bruggmann and Fabrikant's spatializations is a network of toponyms and their relationships, embedded in a geographic map that emphasizes connectivity as well as hierarchy. The inclusion of time enables interesting questions about how certain places have risen or fallen in prominence over some period; this is encoded by node size (frequency of mention) along with edges and centrality (co-reference with another place). The resulting networks are clear and effective, highlighting important relationships through systematic choices of node roles, edge roles, weighting, and embedding.
+
+\subsection{Locating Research Objects in Topic Space}
+Our conceptual design addresses university theses, which do not have any interesting inherent way of locating them (except possibly by campus buildings). We therefore model them as research objects in an \textit{n}-dimensional vector space of topics. To locate them, we perform topic modeling on their abstracts and titles. Although full texts are available for most theses, we consider them to be adequately described at the metadata level, gaining efficiency and practicality as only commonly available metadata are required for spatialization. Topic modeling assigns each thesis a vector of keywords (standing in for their topics) locatable in the two-dimensional topic map. Note that the attribute vector could be comprised of data other than terms associated with a topic (e.g., the author most associated with a given topic of research); however, we chose to assign topics to research objects, as this supports useful exploratory data analyses \cite{Blei2003c}. \newline
+
+\noindent \textbf{Field-based model:} Rather than using the topic model to compute on the similarities of theses, we spatialize it to support visual pattern detection and similarity inferences. Our first spatialization is based on the field concept, with topics as the field attribute. Fields enable questions about the value of an attribute at any position in a given spatial and temporal domain. Field-based models underlie, but do not imply the use of, a landscape metaphor. They involve explicit choices of a spatio-temporal framework and a type of attribute (scalar, vector, spinor, or tensor).
+
+We create a self-organizing map (SOM) from the thesis topic vectors. The SOM creates a field with a two-dimensional abstract spatial framework and a vector attribute. It represents topic locations as hexagonal cells into which point objects (representing the theses) fall. This can be seen as an example of a relative Leibniz space, generated based on objects, rather than a pre-established absolute Newtonian space \cite{ArthurRichard1994SaRi}. The SOM satisfies the criteria for field-based models as follows: 
+
+\begin{itemize}
+     \item In its \textbf{spatio-temporal framework}, time is held constant (covering the entire period of available theses), location is controlled by the topic map, and theme is measured.
+    \item The measured attribute \textbf{value} is an n-dimensional topic vector of words associated with the topic, ordered by their probability of occurring in theses on the topic.
+    \item Furthermore, the topic field is \textbf{continuous}, in that a small move in position in any of six directions results in a small change in attribute value. 
+\end{itemize} 
+
+\noindent \textbf{Network-based model:} Our second choice of spatialization is based on the network concept. Networks provide views of objects that are not supported by a field view, such as questions about direct connections between objects and their centrality in the network \cite{Kuhn2012e}. Graphs formalize network models and give them inferential power and versatility.
+
+% In addition, networks may model flow, though we do not exploit this here, in order to support questions about sources, sinks, and flow rates.  
+%sl: might add instead to one of the last sections (questions, outlook)
+
+Network models in general require the following explicit choices \cite{Newman2018a}: what plays the role of a node?, what plays the role of an edge?, how are edges labeled or weighted?, do they have direction?, and is there an embedding of the nodes, edges, or both in another space? 
+Our network spatialization of theses rests on the following choices:
+%wk: check carefully for consistent use of network to describe the conceptualization and graph for the formalization and encoding. 
+
+%sl: so to be sure I understand, most of the paper (ex. "technical approach - "graph spatialization") should read "graph" rather than "network"?
+
+\begin{itemize}
+    \item The theses (research objects) are conceptualized as \textbf{nodes}. 
+    \item The \textbf{edges} are defined based on a \textbf{binary} topical relation between theses; if two research objects have at least one of three "top topics" in common, they share an edge. 
+    \item The edges are \textbf{weighted} by the value of the topic attribute (0.0--1.00).
+    %wk: did i get this correctly?
+    %sl: yes (which Christina restricts to 3 topics in the implementation)
+    \item The edges are \textbf{non-directed}, as topic sharing is symmetrical.
+    \item The network is \textbf{embedded} in a planar space, also based on value of the topic attribute. 
+    %wk: did i get this correctly?
+    %sl: no; nodes are embedded in a planar space (based on the value of strongest topic along axes from 0--1)
+\end{itemize}
+
+\section{Technical Approach: Implementing Field and Network Spatializations} %sl: double-blind review: should any of these details be anonymized?
+We spatialized masters and doctoral theses accessible through the Alexandria Digital Research Library (ADRL), a repository\footnote{\url{https://alexandria.ucsb.edu/collections/f3348hkz}} curated by the UC Santa Barbara, Library. It is named for the original Alexandria Digital Library (ADL), a project in which users could access multimedia library objects through a map interface \cite{Smith1995a}. Experimental work on ADL also resulted in a prototype “information landscape” of library objects based on frequent keywords \cite{Fabrikant2000b}. Despite the lineage that ADRL shares with the original ADL geo-library project, it does not offer any spatial search capabilities, neither in geographic nor in thematic space; this design limitation presents an opportunity to develop spatial views that enable the discovery of research objects. We use established topic mapping and spatialization techniques \cite{Skupin2003} to:
+
+\begin{itemize}
+\item harvest the metadata of research theses from the ADRL repository, 
+\item compute and assign topics to the theses using topic modeling, and 
+\item spatialize the topics, producing a self-organizing map (SOM) and a network.
+%wk: I am confused about the space underlying the network. Is it really the SOM? If so, the network could end up looking messy.
+%sl: no, the space underlying the network is separate from the SOM. it was previously described in 3.2 ("We do not link the theses in their original SOM embedding", but this was removed)
+\end{itemize}
+
+\subsection{Metadata Harvesting}
+For our experiment, we chose research theses published by graduates of UC Santa Barbara between 2011 and 2016 that represent all 53 academic departments granting graduate degrees. The theses are accessible through a public-facing search interface, which provides facets and keyword-based search. The metadata are not accessible through an API, so we had to obtain permission from the UCSB Library to harvest them for the 1,731 research theses. For harvesting, we used a combination of \textit{WGET}\footnote{\url{https://www.gnu.org/software/wget/}} and the Python libraries \textit{Crummy} and \textit{BeautifulSoup4}\footnote{\url{https://www.crummy.com/software/BeautifulSoup/bs4/doc/}}. The metadata follow the Portland Common Data Model\footnote{\url{https://pcdm.org/2016/04/18/models}} and are comprised of: a unique identifier; a title (of 50 words or less); a year of publication; an author; a degree grantor; a degree supervisor; a language; and a detailed abstract (no word limit) containing a problem statement, a description of methods and procedures used to gather data, and a summary of findings. Researcher contributed (uncontrolled) keywords were only available for research theses added after 2017, so we did not consider keywords in topic modelling. 
+
+\subsection{Topic Modelling}
+We produced a topic model using \textit{MALLET}\footnote{\url{http://mallet.cs.umass.edu/}}, an open-source package developed for text-based machine learning applications. We applied Latent Dirichlet Allocation (LDA) to model the topics present in the combined texts of titles and abstracts of each thesis \cite{Blei2003c}. LDA attributes the presence of each word in the repository to one of the theses’ topics, creating groupings of theses that are related. Thematic relatedness modeled with LDA is derived from the words of these texts. The decision to use LDA is supported by many prior applications to similar dimensionality reduction and classification problems \cite{Blei2003c}. LDA largely succeeds in capturing the notion of relatedness (relative to the set of inputs) despite the fact that  different terms are used within those inputs (e.g., “variability” and “change” are likely to be grouped into a single topic). This is due to its sensitivity to the context of word use; thus, it is a pragmatic solution for dealing with the complex notions of topics and their relatedness.
+
+We removed the standard English stop words using a list from the MALLET package. We then experimented with between 30 to 100 topics, roughly corresponding to the number of academic departments at UCSB, which indicates a rather coarse topic granularity, targeting the cross-disciplinary scope. We found that 71 topics provided the lowest log likelihood value, a criterion that optimizes for the tightest possible lower bound \cite{Blei2003c}. We then assigned topic probabilities to the research objects, coded from 0 to 70. We chose to leave the topics unlabelled; they are characterized only by their sets of keywords. The assignment of topics provides the basis for relatedness in the following steps.
+
+\subsection{Field Spatialization}
+We adapted a method developed by Bruggmann to spatialize the output of a topic model \cite{Bruggmann2016b} by using a self-organizing map (SOM) toolbox\footnote{\url{http://code.google.com/p/somanalyst}} for ArcGIS 9.x written by Lacayo-Emery. This toolbox implements the SOM algorithm \cite{Kohonen1995a} in existing cartographic software, leveraging its clustering and dimensionality reduction to produce a 2-dimensional map that is readily visualized.
+We set the following standard parameters: the x / y dimension of the SOM was 42 x 42 (1,764 hexagons); the length of training was 50,000 / 500,000 runs; and the initial neighborhood radius was 42 / 6. We used the probability distribution matrix that resulted from topic modeling to produce our SOM template in ArcGIS Desktop. For cartographic readability, we only display theses from the most productive departments (those with over 50 theses). This resulted in a SOM showing 775/1,731 theses from 10 departments. Figure~\ref{fig:SOM} shows the SOM, which is also published to ArcGIS Online as an interactive web application\footnote{\url{http://arcg.is/0vyezH}}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.99\textwidth]{2.pdf}
+    \caption{Theses (color colored by academic department) placed in the SOM (gray tessellated topic field of themes, shown with selected keywords) }
+    \label{fig:SOM}
+\end{figure}
+
+\subsection{Network Spatialization}
+We applied a hierarchical clustering method adapted from Leicht et al. \cite{Leicht}, which is a compromise between the single-linkage clustering method (in which a single edge is defined based on the most related pairs of nodes) and average-linkage clustering (in which an edge is defined based on the average relatedness of all pairs of nodes). We used the \textit{tidyverse}\footnote{\url{https://www.tidyverse.org/}} package in R to construct the edge list, assigning theses the role of nodes and shared topics the role of edges; for cartographic readability, we restrict shared topics to 3.
+%wk: this is inconsistent with the earlier claim of a single common topic. Which one is true?
+%sl: three "top topics" (also now consistent earlier claim in 3.2)
+Specifically, each thesis is characterized by the same topic vectors used to produce the SOM. For example, if \textit{Thesis A} is most characterized by Topics 11, 34, and 60 and  \textit{Thesis B} is most characterized by Topics 4, 11, and 27, the theses share an edge in our network based on shared Topic 11. 
+
+We scale node size relative to the amount that two nodes share a corresponding topic; thus, a larger node corresponds strongly with its shared topic and a smaller node does not. For example, if Topic 11 characterizes 70\% of \textit{Thesis A}'s theme, its node size will be 0.7 (out of a maximum size of 1). We also embed nodes in a planar space (distinct from that of the SOM) that reflects how strongly each node corresponds to its "top-topic"; the value comes from the topic vector (0--1). 
+%\textit{Thesis A} is connected to \textit{Thesis B} and will be positioned according to how much it corresponds to the shared topic (Topic 11); thus, if \textit{Thesis A} is characterized 70\% by Topic 11 and \textit{Thesis B} is characterized 60\% by Topic 11, \textit{Thesis A} will be embedded at position (0.7, 0.6) in the planar space. 
+To enable comparisons between the SOM and the network, we randomly sampled without replacement 775 nodes, embedded in a planar space, and connected them with edges standing in for a "top-three" topic. Figure~\ref{fig:network} shows the network constructed with the \textit{networkx}\footnote{\url{https://networkx.github.io/}} library, which is also published in a Jupyter Notebook\footnote{\url{https://github.com/saralafia/adrl/tree/master/3_network}}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.99\textwidth]{3.pdf}
+    \caption{Theses (color colored by academic department) connected by their shared top-three topics (shown with selected keywords)}
+    \label{fig:network}
+\end{figure}
+
+\section{Evaluation: Discovering Thematically Related Research}
+%wk: decided against application and for evaluation, giveen that we designed already for the application
+The spatializations that we produce enable scholars to discover thematically related research objects, unlike the current ADRL, which does not offer any spatial search capabilities. We apply the field and network concepts of spatial information, along with the questions that they enable, to the motivating scenario offered in Section~\ref{sec:motivation},  referencing specific research objects related to the theses of the two geographers in the scenario. 
+%and are summarized in Table~\ref{table:1}. 
+%sl: I'm not crazy about using Golledge's spatial primitives anymore. They don't do much organizationally and create false categories. I want to focus the following sections more on questions.
+The resulting patterns of relatedness are interpreted using Golledge’s spatial primitives of \textit{distance}, \textit{arrangement}, and \textit{scale} \cite{Golledge1995a}, which have informed previous conceptual formalizations \cite{Fabrikant2000b}. 
+
+\subsection{Questions Answered by a Field of Research Topics}
+Both the field (in the form of a self-organizing map, SOM) and the research objects used to produce it enable the discovery of related research topics. Fields enable questions about value (i.e., research topic) at a given location. A continuous field function satisfies Tobler's First Law of Geography \cite{tobler1970computer}, so that nearby topics in the SOM are similar. For pairs of objects, similarity can therefore be assessed by \textit{distance}. Researchers interested in a particular area of research can see related theses by examining those closest to that area of interest in the SOM. Closely related research objects tend to fall within the area's neighborhood (i.e. a single hexagonal topic location or an aggregate of several such cells).
+
+In the case of Bae’s research from our scenario, the SOM displays six research objects from Geography, History, and Sociology within a neighborhood. Neighborhoods can be defined based on various distance thresholds. In addition to shared topics, relatedness may also reflect shared methods and techniques, as these are typically captured in abstracts as well; McKenzie’s research, for example, is in a neighborhood of research objects from Computer Science and Electrical and Computer Engineering. While the subject matter of some research is different (e.g., photography or drugs), the theses share methods (e.g. “spatial, data, search…” and “learning, place, knowledge…”). Figure~\ref{fig:ex_SOM} illustrates these related research objects from the scenario, placed in the SOM.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.99\textwidth]{4.pdf}
+    \caption{Selected theses (color colored by academic department) placed in the SOM and surrounding: (A) Bae's geography thesis; and (B) McKenzie's geography thesis}
+    \label{fig:ex_SOM}
+\end{figure}
+
+Beyond similarity of themes or methods, \textit{arrangement} such as the dispersion or concentration of research themes in a topic space, are also brought out by the field view. Theses that address the “urban, region, local…” topic are clustered and centered in the SOM, indicating furthermore that this topic pertains to many theses; conversely, topics (and their associated research objects) at the periphery of the SOM are less related to other research topics (e.g. “dna, disease, peptide…”) and pertain to fewer theses. Compared with concentrated theses from other departments (like Materials, shown previously in Figure~\ref{fig:SOM}) the Geography department theses are dispersed; although Bae and McKenzies’ theses share topics (“urban, region, local...” and "models, based, system..."), they are on opposite sides of the map. 
+
+The field view with the thesis objects placed in it also reveals the presence and absence of research areas among existing theses. Portions of the field that do not contain any theses show research areas that are not addressed in the repository, possibly suggesting interesting themes not yet studied and signaling opportunities for research at the boundary between disciplines. It should be noted that such gaps can also result from distortions in distance; cartogram techniques, which we have not yet applied to our field view, can be used to account for this by warping the SOM basemap \cite{Bruggmann2016b}. Nonetheless, gaps between History and Geography surrounding Bae’s research for example might suggest opportunities for integration of subject matter and techniques in this area (e.g., in the spatial humanities). 
+
+\textit{Scale} in the field view is determined by topic modeling (number of input topics) and the parameters of the SOM (spatial resolution of the cells that locate topics). The size of the cells in relation to the whole field, and the dimensions of the field influence the position of topics and research objects. In our SOM, only one other thesis shares a top topic with McKenzie’s research; this would likely change if the resolution of the cells changed, resulting in different topic groupings. Prevalent themes of research objects are visible at multiple levels. At the repository level shown in Figure~\ref{fig:SOM}, a prevalent topic appears to be about
+%wk: I don't understand this... why would our own research theme be the most prevalent one at UCSB??
+“spatial, visual, search…” and relates to research across many departments, including Psychology, Geography, and Computer Science. Prevalent topics of departments can also be seen from the color coding of theses by academic department (rather than by academic advisor or year of publication, which would be other possible choices).
+
+% There are a number of decisions that influence scale in the display. A different number of input topics would change the spatial configuration of the SOM in all regards (distance, arrangement, and scale). We decided to model thematic relatedness using the LDA algorithm, while alternative techniques, such as Latent Semantic Analysis, could be used depending on additional constraints, such as a need to deal with a significantly larger input set of research objects \cite{Blei2003c}. We also determined the number of topics based on the lowest log likelihood value; alternative techniques would yield a different topic solution. The topics themselves would also differ substantially if the full text of the theses (rather than just the title and abstract) were used as input to the topic model. 
+
+\subsection{Questions Answered by a Network of Research Objects}
+Questions about the similarity, distribution, and prevalence of research topics in a repository are handled in the SOM view; however, questions about explicitly modeled relationships between the objects are not. Networks deal with these questions by encoding the relationships in their edges: for instance, are the theses of Bae and McKenzie topically related, and if so how? Figure~\ref{fig:ex_network} illustrates how networks convey connectivity, showing topical correspondence between departments and topical diversity within departments.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.99\textwidth]{5.pdf}
+    \caption{Selected theses (color colored by academic department and labelled by title) connected to other theses if the pair shares any three top topics} 
+    \label{fig:ex_network}
+\end{figure}
+
+A network view answers questions about the specific relation encoded by network \textit{distance}. For Bae’s research, the network shows four other theses from Geography and History separated by one edge. A comparison between the network and the SOM shows that all selected research objects located near Bae's research are two or more hops away from it. A different interpretation of network distance shows how the topic of interest ("urban, region, local...") thematically relates research objects within a smaller network distance to Bae’s research, and how these research nodes connect the research with the selected nodes. 
+
+Network distance between McKenzie’s geography thesis and a computer science thesis is larger than in the SOM (over 5 distance degrees) suggesting that loosely defined topics (such as the “data” topic) may need to be interpreted differently when located in a SOM or in a network. Although both theses are represented in network clusters of a shared topic, the geography thesis shares a stronger topic relation with four other theses.
+
+\textit{Arrangement} is related to node embedding; the most central topics in the network visualization are shared by the most research objects, as shown in Figure~\ref{fig:network} ("data, performance, techniques..." and "image, multiple, technology..."). Conversely, the most peripheral nodes, such as the nodes sharing the "work, material, particle..." topic represent theses from single departments (in this case Materials) also shown in Figure~\ref{fig:network}.
+
+\textit{Scale} in the network view shows a hierarchy of individual work, departments, and the repository as a whole. The nodes and the edge relations in a network can be defined in many ways. A node could represent a particular researcher and its attributes could be a list of theses published or supervised by the academic. Instead of representing a shared topic, edges could stand for a shared advisor, creating a network of ‘academic families or schools’. Also, while we chose to restrict edges to three top topics, this illustrates the flexibility of the design approach; any kind of binary relations between research objects can be visualized.
+
+\section{Outlook}
+In order to enable discovery in a multidisciplinary setting, we develop spatializations that do not require users to have prior disciplinary knowledge. The relatedness of research objects can be ascertained simply by exploring neighborhoods and/or edges. Furthermore, the spatializations can be used in hierarchical combinations, offering distinct yet complementary views of the same repository at different granularities. While exploring a self-organizing map (SOM), a user first gains an overview of all topics in the repository, identifying a specific area of the map with topics of interest. The subset of research objects falling into that area of the SOM can then be explored in the network, enabling further interrogation of connections, such as the strength of their shared topics.
+
+% We anticipate that emerging scholars, such as graduate students who are in the process of learning about their research domains, will be interested in using spatializations to learn about and discover related research. 
+
+Spatializations in library services enable thematic search for research objects and complement our previous implementation of geographic search for them. Spatializing research themes extends the power of spatial search from geographically referenced information into topic spaces strongly formalized here by core concepts of spatial information: fields and networks. Indexing research by theme, location, and time \cite{Sinton1977} enables scholars to ask novel questions. The relatedness of research, indicated by proximity either in geographic location (e.g. Central American archaeology and entomology research) or thematic location (e.g. archaeological excavations of diverse ancient cultures) shows the complementarity and potential interplay between the thematic and geographic views that our work enables.
+
+Temporal visualization may also play a role in enabling research discovery in ways going beyond single time sliders. We envision using temporal information inhering in research theses (e.g. publication date; events or periods studied) to be modeled by \textit{events} and support reasoning on periods (time intervals). 
+%sl: how to say a bit more about the lack of formal theory (at present) to bring events to the level of fields and networks? 
+Time, made explicit and linked to spatializations, could show how certain research topics or areas have evolved over time, both in geographic and thematic spaces. Visualizing the quality (as opposed to the content) core concepts of spatial information, which currently include \textit{granularity}, \textit{accuracy}, and \textit{provenance} \cite{Kuhn2012e} suggests many directions for future spatialization work. \textit{Granularity}, or level of detail of spatializations, relates both to spatial scale in the display and to the topics (coarsening; refining) shown in spatializations. \textit{Accuracy} of spatializations could be assessed by comparing multiple spatializations or domain ontologies. Finally, \textit{provenance} may provide a way to explore the lineage of ideas (e.g. discovering related research through co-citation networks).
+
+The long-term goals for this work are to increase awareness of relevant previous or ongoing research by applying spatial thinking to the discovery of thematically related work. Integrating research by spatialized topic, rather than siloing it by discipline, is likely to enable increased collaboration across academic disciplines. Much like browsing stacks of books in a physical library, exploring a spatialized library repository can transform a common research task into a learning opportunity or a serendipitous discovery. 
+
+%%
+%% Bibliography
+%%
+
+%% Please use bibtex, 
+
+\bibliography{lipics-v2018-sample-article}
+
+% \appendix
+% \section{Selected Research Objects}
+% \label{sec:table}
+
+% \begin{table}[ht]
+% \centering
+% \begin{tabular}{ |m{2cm}|m{4cm}|m{6cm}| } 
+% \hline
+% Department & Title & Top Topics, Proportion, Keywords \\
+% \hline \hline
+% \textbf{Geography} & 
+% \textbf{Representations of an Urban Neighborhood: Residents' Cognitive Boundaries of Koreatown, Los Angeles} & 
+% \textbf{1 (0.41) urban region local \newline
+% 37 (0.28) models based system \newline
+% 7 (0.08) studies task differences} \\
+% \hline
+% Sociology &
+% In the Wake of Crisis: Race, Place and Residential Foreclosures in the Los Angeles Metropolitan Region &
+% 1 (0.46) urban region local \newline 
+% 37 (0.14) models based system \newline 
+% 7 (0.12) studies task differences \\ 
+%  \hline
+% Sociology &
+% Smart Growth Machines: The Political Economy of Sustainable Place &
+% 1 (0.41) urban region local \newline
+% 37 (0.19) models based system \newline
+% 17 (0.19) study research survey \\ 
+% \hline
+% History &
+% Merchants and marauders: Genoese maritime predation in the twelfth-century Mediterranean &
+% 1 (0.37) urban region local \newline
+% 37 (0.29) models based system \newline
+% 54 (0.19) early modern period \\
+% \hline
+% Geography &
+% Rio de Janeiro's Emerging Sporting Mega-Event Geography: Unraveling the Carioca Pattern of Urban Development &
+% 1 (0.43) urban region local \newline
+% 69 (0.18) social political racial \newline
+% 37 (0.17) models based system \\
+% \hline
+% Geography &
+% The Struggle to Create a Residential Community in Downtown Los Angeles &
+% 1 (0.42) urban region local \newline
+% 19 (0.17) social international states \newline
+% 17 (0.14) study research survey \\
+% \hline
+% Geography &
+% Land succession and intensification in the agricultural frontier: Sierra del Lacandon National Park, Guatemala &
+% 1 (0.36) urban region local \newline
+% 46 (0.20) environmental production workers \newline
+% 17 (0.12) study research survey \\
+% \hline \hline
+% \textbf{Geography} &
+% \textbf{A Temporal Approach to Defining Place Types based on User-Contributed Geosocial Content } & \textbf{
+% 37 (0.49) studies task differences \newline
+% 26 (0.16) data image multiple \newline
+% 1 (0.13) urban region local} \\
+% \hline
+% Electrical and Computer \newline Engineering &
+% Human motivated multicamera video analytics &
+% 37 (0.37) models based system \newline
+% 26 (0.32) data image multiple \newline
+% 25 (0.15) data performance techniques \\
+% \hline
+% Computer \newline Science &
+% Composition Context Photography &
+% 37 (0.37) models based system \newline
+% 26 (0.22) data image multiple \newline
+% 10 (0.20) learning place knowledge \\
+% \hline
+% Electrical and Computer \newline Engineering &
+% Multi-Output Multi-Modal Parts-Based Regression for High Dimensional Data with Low Sample Size &
+% 37 (0.25) models based system \newline
+% 26 (0.21) data image multiple \newline
+% 36 (0.20) spatial visual search \\
+% \hline
+% Computer \newline Science &
+% Querying and Mining Chemical Databases for Drug Discovery  &
+% 37 (0.36) models based system \newline
+% 3 (0.14) dna disease peptide \newline
+% 26 (0.13) data image multiple \\
+% \hline
+% \end{tabular}
+% \caption{Selected research objects related respectively to the work of Bae and McKenzie (in bold)}
+% \label{table:1}
+% \end{table}
+
+\end{document}
